@@ -42,7 +42,7 @@ RUN gem install fluentd -v 0.12.11
 
 COPY fluent.conf /fluentd/etc/
 ONBUILD COPY fluent.conf /fluentd/etc/
-ONBUILD COPY plugins/* /fluentd/plugins/
+ONBUILD COPY plugins/ /fluentd/plugins/
 
 WORKDIR /home/ubuntu
 
