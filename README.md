@@ -3,7 +3,7 @@
 This container image is to create endpoint to collect logs on your host.
 
 ```
-docker run -d -p 24224:24224 -v /data:/fluentd/log fluent/fluentd
+docker run -d -p 24224:24224 -v /data:/fluentd/log analyser/fluentd
 ```
 
 Default configurations are to:
@@ -34,12 +34,12 @@ Use this variable to specify other options, like `-v` or `-q`.
 It is very easy to use this image as base image. Write your `Dockerfile` and configuration files, and/or your own plugin files if needed.
 
 ```
-FROM fluent/fluentd:latest
+FROM analyser/fluentd:latest
 MAINTAINER your_name <...>
 USER ubuntu
 WORKDIR /home/ubuntu
 ENV PATH /home/ubuntu/ruby/bin:$PATH
-RUN gem install fluent-plugin-secure-forward
+RUN gem install fluent-plugin-secure-forward --no-rdoc --no-ri
 EXPOSE 24224
 CMD fluentd -c /fluentd/etc/$FLUENTD_CONF -p /fluentd/plugins $FLUENTD_OPT
 ```
