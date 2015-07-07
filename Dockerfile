@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
-MAINTAINER TAGOMORI Satoshi <tagomoris@gmail.com>
-LABEL Description="Fluentd docker image" Vendor="Fluent Organization" Version="1.0"
+MAINTAINER Analyser <analyser@gmail.com>
+LABEL Description="Fluentd Docker Image" Vendor="Analyser" Version="1.0"
 
 RUN apt-get update -y && \
     apt-get install -y \
