@@ -2,7 +2,8 @@ FROM ubuntu:14.04
 MAINTAINER TAGOMORI Satoshi <tagomoris@gmail.com>
 LABEL Description="Fluentd docker image" Vendor="Fluent Organization" Version="1.0"
 
-RUN apt-get update -y && apt-get install -y \
+RUN apt-get update -y && \
+    apt-get install -y \
               autoconf \
               bison \
               build-essential \
@@ -15,8 +16,8 @@ RUN apt-get update -y && apt-get install -y \
               libreadline6-dev \              
               libssl-dev \
               libyaml-dev \
-              zlib1g-dev \              
-        && rm -rf /var/lib/apt/lists/*
+              zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN useradd ubuntu -d /home/ubuntu -m -U
 RUN chown -R ubuntu:ubuntu /home/ubuntu
@@ -36,13 +37,13 @@ RUN git clone https://github.com/tagomoris/xbuild.git /home/ubuntu/.xbuild
 RUN /home/ubuntu/.xbuild/ruby-install 2.2.2 /home/ubuntu/ruby
 
 ENV PATH /home/ubuntu/ruby/bin:$PATH
-RUN gem install fluentd -v 0.12.11
+RUN gem install fluentd -v 0.12.12
 
 # RUN gem install fluent-plugin-webhdfs
 
 COPY fluent.conf /fluentd/etc/
 ONBUILD COPY fluent.conf /fluentd/etc/
-ONBUILD COPY plugins/* /fluentd/plugins/
+ONBUILD COPY plugins/ /fluentd/plugins/
 
 WORKDIR /home/ubuntu
 
