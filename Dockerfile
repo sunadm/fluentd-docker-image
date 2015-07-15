@@ -41,6 +41,9 @@ RUN gem install fluentd -v 0.12.12
 
 # RUN gem install fluent-plugin-webhdfs
 
+RUN gem install fluent-plugin-elasticsearch   --no-rdoc --no-ri
+RUN gem install fluent-plugin-record-reformer --no-rdoc --no-ri
+
 COPY fluent.conf /fluentd/etc/
 ONBUILD COPY fluent.conf /fluentd/etc/
 ONBUILD COPY plugins/ /fluentd/plugins/
