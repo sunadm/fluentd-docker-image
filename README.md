@@ -1,16 +1,37 @@
 ### Fluentd docker image
 
-This container image is to create endpoint to collect logs on your host.
+This Docker image is to create endpoint to collect logs on your host.
+
+Sample Docker Compose yml file:
 
 ```
-docker run -d -p 24224:24224 -v /data:/fluentd/log analyser/fluentd
+server:
+  image: analyser/fluentd:v0.12.12
+  restart: always
+  hostname: logserver
+  links:
+    - es:elasticsearch
+    - es:es
+  volumes:
+    - /var/lib/docker/containers:/var/lib/docker/containers
+    - ./fluentd-docker.pos:/fluentd/log/fluentd-docker.pos
+    - ./fluent.conf:/fluentd/etc/fluent.conf
+
+es:
+  image: elasticsearch:latest
+  restart: always
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+
+kibana:
+  ports:
+    - "5601:5601"
+  image: kibana:latest
+  restart: always
+  links:
+    - es:elasticsearch
 ```
-
-Default configurations are to:
-
-* listen port `24224` for fluentd forward protocol
-* store logs with tag `docker.**` into `/fluentd/log/docker.*.log` (and symlink `docker.log`)
-* store all other logs into `/fluentd/log/data.*.log` (and symlink data.log)
 
 ## Configurable ENV variables
 
@@ -36,9 +57,6 @@ It is very easy to use this image as base image. Write your `Dockerfile` and con
 ```
 FROM analyser/fluentd:latest
 MAINTAINER your_name <...>
-USER ubuntu
-WORKDIR /home/ubuntu
-ENV PATH /home/ubuntu/ruby/bin:$PATH
 RUN gem install fluent-plugin-secure-forward --no-rdoc --no-ri
 EXPOSE 24224
 CMD fluentd -c /fluentd/etc/$FLUENTD_CONF -p /fluentd/plugins $FLUENTD_OPT
