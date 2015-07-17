@@ -19,27 +19,20 @@ RUN apt-get update -y && \
               zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
 
-RUN useradd ubuntu -d /home/ubuntu -m -U
-RUN chown -R ubuntu:ubuntu /home/ubuntu
-
 # for log storage (maybe shared with host)
 RUN mkdir -p /fluentd/log
 # configuration/plugins path (default: copied from .)
 RUN mkdir -p /fluentd/etc
 RUN mkdir -p /fluentd/plugins
 
-RUN chown -R ubuntu:ubuntu /fluentd
+RUN mkdir -p /opt/ruby
+WORKDIR /tmp
 
-USER ubuntu
-WORKDIR /home/ubuntu
+RUN git clone https://github.com/tagomoris/xbuild.git /tmp/.xbuild
+RUN /tmp/.xbuild/ruby-install 2.2.2 /opt/ruby
 
-RUN git clone https://github.com/tagomoris/xbuild.git /home/ubuntu/.xbuild
-RUN /home/ubuntu/.xbuild/ruby-install 2.2.2 /home/ubuntu/ruby
-
-ENV PATH /home/ubuntu/ruby/bin:$PATH
-RUN gem install fluentd -v 0.12.12
-
-# RUN gem install fluent-plugin-webhdfs
+ENV PATH /opt/ruby/bin:$PATH
+RUN gem install fluentd -v 0.12.12            --no-rdoc --no-ri
 
 RUN gem install fluent-plugin-elasticsearch   --no-rdoc --no-ri
 RUN gem install fluent-plugin-record-reformer --no-rdoc --no-ri
@@ -48,7 +41,7 @@ COPY fluent.conf /fluentd/etc/
 ONBUILD COPY fluent.conf /fluentd/etc/
 ONBUILD COPY plugins/ /fluentd/plugins/
 
-WORKDIR /home/ubuntu
+WORKDIR /opt
 
 ENV FLUENTD_OPT=""
 ENV FLUENTD_CONF="fluent.conf"
